@@ -7,7 +7,7 @@
             @dragleave.prevent="dragLeave"
             @drop.prevent="drop($event)">
 
-            <h2>Drag & Drop an image of participants</h2>
+            <h2>Drag & Drop / Copy & Paste<br><br>an image of participants</h2>
         </div>
         <img v-if="isTesting" v-bind:src="imageSource">
     </div>
@@ -52,28 +52,52 @@ export default {
             reader.readAsDataURL(file)
 
             reader.onloadend = () => {
-                let img = new Image();
-                img.src = image_source;
-
-                Image.load(image_source).then((image) => {
-                    let gray = image.grey();
-                    let masked = gray.mask({threshold: 0.6, invert: true})
-
-                    this.imageSource = masked.toDataURL();
-
-                    this.isInProgress = true;
-
-                    Tesseract.recognize(masked.toBuffer(), 'eng',
-                        { logger: m => {
-                            console.log(m)
-                            this.status = m.status.charAt(0).toUpperCase() + m.status.slice(1);
-                            this.progress = m.progress
-                        }}).then(({data: {text}}) => {
-                        this.isInProgress = false;
-                        this.$emit("text", text);
-                    })
-                })
+                this.processImage(image_source);
             }
+        },
+        processImage(image_source) {
+            let img = new Image();
+            img.src = image_source;
+
+            Image.load(image_source).then((image) => {
+                let gray = image.grey();
+                let masked = gray.mask({threshold: 0.6, invert: true})
+
+                this.imageSource = masked.toDataURL();
+
+                this.isInProgress = true;
+
+                Tesseract.recognize(masked.toBuffer(), 'eng',
+                    { logger: m => {
+                        console.log(m)
+                        this.status = m.status.charAt(0).toUpperCase() + m.status.slice(1);
+                        this.progress = m.progress
+                    }}).then(({data: {text}}) => {
+                    this.isInProgress = false;
+                    this.$emit("text", text);
+                })
+            })
+        }
+    },
+    mounted () {
+        document.onpaste = (event) => {
+            let items = event.clipboardData.items;
+
+            console.log(JSON.stringify(items));
+
+                let imageFile = items[0].getAsFile()
+
+                let image_source;
+
+                let reader = new FileReader()
+                reader.onload = (event) => {
+                    image_source = event.target.result;
+                }
+                reader.readAsDataURL(imageFile);
+
+                reader.onloadend = () => {
+                    this.processImage(image_source);
+                }
         }
     }
 }
