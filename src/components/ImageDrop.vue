@@ -1,5 +1,7 @@
 <template>
     <div class="component">
+        <label v-if="isInProgress" for="progress-bar">{{status}}</label>
+        <progress v-if="isInProgress" id="progress-bar" v-bind:value="progress" max="1"></progress>
         <div class="drop" v-bind:class="{active: isActive}"
             @dragover.prevent="dragOver"
             @dragleave.prevent="dragLeave"
@@ -7,6 +9,7 @@
 
             <h2>Drag & Drop an image of participants</h2>
         </div>
+        <img v-if="isTesting" v-bind:src="imageSource">
     </div>
 </template>
 
@@ -19,6 +22,11 @@ export default {
     data () {
         return {
             isActive: false,
+            imageSource: "",
+            isTesting: false,
+            isInProgress: false,
+            progress: 0,
+            status: ""
         }
     },
     methods: {
@@ -49,9 +57,19 @@ export default {
 
                 Image.load(image_source).then((image) => {
                     let gray = image.grey();
-                    let masked = gray.mask({threshold: 0.9})
+                    let masked = gray.mask({threshold: 0.6, invert: true})
 
-                    Tesseract.recognize(masked.toBuffer()).then(({data: {text}}) => {
+                    this.imageSource = masked.toDataURL();
+
+                    this.isInProgress = true;
+
+                    Tesseract.recognize(masked.toBuffer(), 'eng',
+                        { logger: m => {
+                            console.log(m)
+                            this.status = m.status.charAt(0).toUpperCase() + m.status.slice(1);
+                            this.progress = m.progress
+                        }}).then(({data: {text}}) => {
+                        this.isInProgress = false;
                         this.$emit("text", text);
                     })
                 })
@@ -71,4 +89,8 @@ export default {
     border-width: 0.2rem;
 }
 
+label {
+    font-size: 1.2rem;
+    margin-right: 5px;
+}
 </style>

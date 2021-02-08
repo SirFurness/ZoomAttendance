@@ -5,8 +5,8 @@
             <p>Absent</p>
             <div class="absent">
                 <div class="student-name" v-for="(student, index) in absent" :key="index">
-                    {{ student }} 
-                    <div v-if="index != absent.length-1">,</div>
+                    <div v-if="index != absent.length-1">{{student}},</div>
+                    <div v-if="index == absent.length-1">{{student}}</div>
                 </div>
                 <div v-if="absent.length == 0">Everyone's here!</div>
             </div>
@@ -104,6 +104,7 @@ export default {
     .absent {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
 
         gap: 10px;
 
