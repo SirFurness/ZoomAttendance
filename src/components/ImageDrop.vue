@@ -61,7 +61,25 @@ export default {
 
             Image.load(image_source).then((image) => {
                 let gray = image.grey();
-                let masked = gray.mask({threshold: 0.6, invert: true})
+                //let masked = gray.mask({threshold: 0.6, invert: true})
+                let algo = "minimum"
+                let masked = gray.mask({algorithm: algo})
+
+
+                let data = Array.from(masked.data).flat();
+
+                let total = data.length;
+                let numOfZero = 0;
+
+                data.forEach(elem => {
+                    if(elem === 0) {
+                        numOfZero += 1;
+                    }
+                })
+
+                if(numOfZero/total > .5) {
+                    masked.invert({inPlace: true})
+                }
 
                 this.imageSource = masked.toDataURL();
 
