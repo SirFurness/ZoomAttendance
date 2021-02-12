@@ -31,16 +31,7 @@ function extractNames(text) {
         if(line.includes("Participants") || line == "" || line.trim() == "") {
             continue;
         }
-
-        let trimLine = line.trim();
-
-        if(trimLine.charAt(1) == " ") {
-            let removeFirstChar = trimLine.substring(1);
-            names.push(removeFirstChar.trim())
-        }
-        else {
-            names.push(trimLine);
-        }
+        names.push(line);
     }
 
     return names;

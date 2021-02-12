@@ -87,7 +87,6 @@ export default {
 
                 Tesseract.recognize(masked.toBuffer(), 'eng',
                     { logger: m => {
-                        console.log(m)
                         this.status = m.status.charAt(0).toUpperCase() + m.status.slice(1);
                         this.progress = m.progress
                     }}).then(({data: {text}}) => {
