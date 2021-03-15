@@ -1,6 +1,9 @@
 <template>
     <div class="addpage">
-        <p class="header">{{ headerText }}</p>
+        <div class="header">
+            <p>{{ headerText }}</p>
+            <button>Delete Class</button>
+        </div>
         <div class="form">
             <div class="class-name">
                 <p>Class Name:</p>
@@ -112,6 +115,7 @@ export default {
     html, body {
         margin: 0px;
         height: 100%;
+        overflow: auto;
     }
 
     .addpage {
@@ -139,6 +143,14 @@ export default {
 
         font-size: 2rem;
         font-weight: 700;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .header button {
+        margin-top: 25px;
     }
 
     .form {

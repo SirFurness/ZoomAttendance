@@ -13,6 +13,7 @@ document.title = "Zoom Attendance"
   --bg-color: #d4d4d6;
   --snd-bg-color: #e0e0e0;
   --text-color: black;
+  overflow: auto;
 }
 #app {
   /*font-family: Avenir, Helvetica, Arial, sans-serif;*/

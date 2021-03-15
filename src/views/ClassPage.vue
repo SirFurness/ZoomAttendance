@@ -71,6 +71,8 @@ export default {
         display: grid;
         grid-template-rows: 10% auto 5%;
         grid-template-columns: 3% auto 3%;
+
+        overflow: auto;
     }
 
     p {
